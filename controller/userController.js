@@ -6,6 +6,7 @@ import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { v2 as cloudinary } from "cloudinary";
 
+// register user
 export const registerUser = handleAsyncError(async (req, res, next) => {
   const { name, email, password, avatar } = req.body;
 
@@ -264,7 +265,7 @@ export const deleteUser = handleAsyncError(async (req, res, next) => {
   const imageId = user.avatar.public_id;
   await cloudinary.uploader.destroy(imageId);
 
-  await User.findOneAndDelete(req.params.id);
+  await User.findByIdAndDelete(req.params.id);
   res.status(200).json({
     success: true,
     message: "User Deleted Successfully",

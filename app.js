@@ -22,7 +22,12 @@ const app = express();
 
 // CORS for dev only
 
-app.use(cors({}));
+app.use(
+  cors({
+    origin: "https://mern-ecommerce-frontend-k6rb.vercel.app",
+    credentials: true,
+  })
+);
 
 // Middleware
 app.use(express.json());
