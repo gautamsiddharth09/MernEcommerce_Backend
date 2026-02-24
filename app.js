@@ -16,16 +16,19 @@ const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
   dotenv.config({ path: 'backend/config/config.env' });
-}
+} 
 
 const app = express();
 
 // CORS for dev only
 if (process.env.NODE_ENV !== "PRODUCTION") {
-  app.use(cors({
-    origin: "http://localhost:5173",
+  app.use(cors({}));
+}else{
+   app.use(cors({
+    origin: "https://mern-ecommerce-frontend-k6rb.vercel.app",
     credentials: true
   }));
+
 }
 
 // Middleware
