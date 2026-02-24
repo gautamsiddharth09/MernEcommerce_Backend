@@ -7,29 +7,22 @@ import order from "./routes/orderRoutes.js";
 import payment from "./routes/paymentRoutes.js";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
-import dotenv from 'dotenv'
-import path from 'path'
+import dotenv from "dotenv";
+import path from "path";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 if (process.env.NODE_ENV !== "PRODUCTION") {
-  dotenv.config({ path: 'backend/config/config.env' });
-} 
+  dotenv.config({ path: "backend/config/config.env" });
+}
 
 const app = express();
 
 // CORS for dev only
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  app.use(cors({}));
-}else{
-   app.use(cors({
-    origin: "*",
-    credentials: true
-  }));
 
-}
+app.use(cors({}));
 
 // Middleware
 app.use(express.json());
