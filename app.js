@@ -25,7 +25,7 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
   app.use(cors({}));
 }else{
    app.use(cors({
-    origin: "https://mern-ecommerce-frontend-k6rb.vercel.app",
+    origin: "*",
     credentials: true
   }));
 
