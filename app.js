@@ -22,30 +22,30 @@ const app = express();
 
 // CORS for dev only
 
-app.use(
-  cors({
-    origin: "https://mern-ecommerce-frontend-k6rb.vercel.app",
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "https://mern-ecommerce-frontend-k6rb.vercel.app",
+//     credentials: true,
+//   })
+// );
 
 
-// const allowedOrigins = [
-//   "http://localhost:5173", // your Vite dev server
-//   "https://mern-ecommerce-frontend-k6rb.vercel.app", // production
-// ];
+const allowedOrigins = [
+  "http://localhost:5173", // your Vite dev server
+  "https://mern-ecommerce-frontend-k6rb.vercel.app", // production
+];
 
-// app.use(cors({
-//   origin: function(origin, callback) {
-//     if (!origin) return callback(null, true); 
-//     if (allowedOrigins.indexOf(origin) === -1) {
-//       return callback(new Error("Not allowed by CORS"), false);
-//     }
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); 
+    if (allowedOrigins.indexOf(origin) === -1) {
+      return callback(new Error("Not allowed by CORS"), false);
+    }
     
-//     return callback(null, true);
-//   },
-//   credentials: true, 
-// }));
+    return callback(null, true);
+  },
+  credentials: true, 
+}));
 
 
 // Middleware
