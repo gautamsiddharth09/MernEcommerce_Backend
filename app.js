@@ -29,6 +29,25 @@ app.use(
   })
 );
 
+
+// const allowedOrigins = [
+//   "http://localhost:5173", // your Vite dev server
+//   "https://mern-ecommerce-frontend-k6rb.vercel.app", // production
+// ];
+
+// app.use(cors({
+//   origin: function(origin, callback) {
+//     if (!origin) return callback(null, true); 
+//     if (allowedOrigins.indexOf(origin) === -1) {
+//       return callback(new Error("Not allowed by CORS"), false);
+//     }
+    
+//     return callback(null, true);
+//   },
+//   credentials: true, 
+// }));
+
+
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
