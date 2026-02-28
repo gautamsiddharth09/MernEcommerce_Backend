@@ -31,8 +31,8 @@ const app = express();
 
 
 const allowedOrigins = [
-  "http://localhost:5173", // your Vite dev server
-  "https://unrivaled-marshmallow-a020b6.netlify.app", // production
+  "http://localhost:5173", //Vite dev server
+  "https://whimsical-bavarois-aefade.netlify.app/", // production
 ];
 
 app.use(cors({
