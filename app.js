@@ -32,7 +32,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173", // your Vite dev server
-  "https://mern-ecommerce-frontend-k6rb.vercel.app", // production
+  "https://unrivaled-marshmallow-a020b6.netlify.app", // production
 ];
 
 app.use(cors({
