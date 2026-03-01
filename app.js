@@ -33,6 +33,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173", //Vite dev server
   "https://whimsical-bavarois-aefade.netlify.app", // production
+  "https://whimsical-bavarois-aefade.netlify.app/"
 ];
 
 app.use(cors({
