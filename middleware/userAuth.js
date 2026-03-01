@@ -16,7 +16,7 @@ export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
     );
   }
 
-  // Extract token after "Bearer "
+  // extract token after "Bearer "
   const token = authHeader.split(" ")[1];
 
   try {
