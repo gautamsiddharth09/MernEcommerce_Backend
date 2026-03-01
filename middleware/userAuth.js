@@ -4,7 +4,7 @@ import User from "../model/userModel.js";
 import HandleError from "../utils/handleError.js";
 
 export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
-  const token = req.cookies.token;
+  const token = req.headers.authorization;
   if (!token) {
     return next(
       new HandleError(
