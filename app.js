@@ -31,21 +31,13 @@ const app = express();
 
 
 const allowedOrigins = [
-  "http://localhost:5173", //Vite dev server
-  "https://whimsical-bavarois-aefade.netlify.app", // production
-  "https://whimsical-bavarois-aefade.netlify.app/"
+  "http://localhost:5173",
+  "https://whimsical-bavarois-aefade.netlify.app"
 ];
 
 app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true); 
-    if (allowedOrigins.indexOf(origin) === -1) {
-      return callback(new Error("Not allowed by CORS"), false);
-    }
-    
-    return callback(null, true);
-  },
-  credentials: true, 
+  origin: allowedOrigins,
+  credentials: true
 }));
 
 
