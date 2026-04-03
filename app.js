@@ -20,14 +20,16 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 
 const app = express();
 
-// CORS for dev only
 
-// app.use(
-//   cors({
-//     origin: "https://mern-ecommerce-frontend-k6rb.vercel.app",
-//     credentials: true,
-//   })
-// );
+// const allowedOrigins = [
+//   "http://localhost:5173",
+//   "https://whimsical-bavarois-aefade.netlify.app"
+// ];
+
+// app.use(cors({
+//   origin: allowedOrigins,
+//   credentials: true
+// }));
 
 
 const allowedOrigins = [
@@ -36,9 +38,18 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: allowedOrigins,
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 
 
 // Middleware
