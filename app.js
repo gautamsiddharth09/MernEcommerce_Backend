@@ -34,7 +34,6 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://whimsical-bavarois-aefade.netlify.app",
   "https://mern-stylenest.onrender.com"
 ];
 
