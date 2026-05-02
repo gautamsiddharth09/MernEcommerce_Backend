@@ -4,34 +4,30 @@ import User from "../model/userModel.js";
 import HandleError from "../utils/handleError.js";
 
 export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
+  const token = req.cookies.token;
+  console.log("Token from cookie:", token);
 
-  const authHeader = req.headers.authorization;
-
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    return next(
-      new HandleError(
-        "Authentication token missing or invalid format",
-        401
-      )
-    );
+  if (!token) {
+    console.log("No token found");
+    return next(new HandleError("Authentication token missing", 401));
   }
-
-  // extract token after "Bearer "
-  const token = authHeader.split(" ")[1];
 
   try {
     const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    console.log("Decoded data:", decodedData);
 
     const user = await User.findById(decodedData.id);
+    console.log("User found:", user);
 
     if (!user) {
+      console.log("User not found");
       return next(new HandleError("User not found", 401));
     }
 
     req.user = user;
     next();
-
   } catch (error) {
+    console.log("Token verification error:", error);
     return next(new HandleError("Invalid or expired token", 401));
   }
 });

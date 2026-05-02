@@ -20,39 +20,24 @@ if (process.env.NODE_ENV !== "PRODUCTION") {
 
 const app = express();
 
+// app.use(
+//   cors({
+//     origin: true,
+//     credentials: true,
+//   }),
+// );
 
-// const allowedOrigins = [
-//   "http://localhost:5173",
-//   "https://whimsical-bavarois-aefade.netlify.app"
-// ];
+app.use(
+  cors({
+    origin: "http://localhost:5174",
+    credentials: true,
+  })
+);
 
 // app.use(cors({
-//   origin: allowedOrigins,
+//   origin: "http://localhost:5173", // No function, just the string
 //   credentials: true
 // }));
-
-
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://mern-stylenest.onrender.com"
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-     console.log("orogin--", origin)
-    if (!origin) return callback(null, true);
-   
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true
-}));
-
-
 
 // Middleware
 app.use(express.json());
