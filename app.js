@@ -29,7 +29,10 @@ const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: [
+      "http://localhost:5174",
+      "https://mern-stylenest.onrender.com"
+    ],
     credentials: true,
   })
 );
