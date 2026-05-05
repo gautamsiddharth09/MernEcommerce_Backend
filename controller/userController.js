@@ -10,29 +10,30 @@ import { v2 as cloudinary } from "cloudinary";
 export const registerUser = handleAsyncError(async (req, res, next) => {
   const { name, email, password, avatar } = req.body;
 
-  if (!avatar) {
+  if (!name || !email || !password) {
+    return next(new HandleError("Please provide name, email and password", 400));
+  }
+
+  if (!avatar || avatar.trim() === "") {
     return next(new HandleError("Avatar is required", 400));
   }
 
-  const myCloud = await cloudinary.uploader.upload(avatar, {
-    folder: "avatar",
-    width: 150,
-    crop: "scale",
-  });
-
-  console.log({
-    name,
-    email,
-    password,
-    avatar: {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    },
-  });
+  let myCloud;
+  try {
+    myCloud = await cloudinary.uploader.upload(avatar, {
+      folder: "avatar",
+      width: 150,
+      crop: "scale",
+    });
+  } catch (error) {
+    return next(
+      new HandleError(error.message || "Avatar upload failed", 500)
+    );
+  }
 
   const user = await User.create({
     name,
-    email,
+    email: email.toLowerCase(),
     password,
     avatar: {
       public_id: myCloud.public_id,
@@ -49,7 +50,7 @@ export const loginUser = handleAsyncError(async (req, res, next) => {
   if (!email || !password) {
     return next(new HandleError("Email or password can not be empty", 400));
   }
-  const user = await User.findOne({ email }).select("+password");
+ const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
   if (!user) {
     return next(new HandleError("Invalid Email or password", 401));
   }
@@ -65,10 +66,13 @@ export const loginUser = handleAsyncError(async (req, res, next) => {
 
 //Logout
 export const logout = handleAsyncError(async (req, res, next) => {
-  res.cookie("token", null, {
-    expire: new Date(Date.now()),
-    httpOnly: true,
-  });
+res.cookie("token", null, {
+  expires: new Date(Date.now()),
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+});
+// i was facing cors issues that is why i added env var. for https safety
   res.status(200).json({
     success: true,
     message: "Successfully Logged out",
@@ -95,7 +99,8 @@ export const requestPasswordReset = handleAsyncError(async (req, res, next) => {
 
   console.log("protocol", req.protocol);
   console.log("host", req.get("host"));
-  const resetPasswordURL = `${req.protocol}://${req.get("host")}/reset/${resetToken}`;
+  // const resetPasswordURL = `${req.protocol}://${req.get("host")}/reset/${resetToken}`;
+  const resetPasswordURL = `${process.env.FRONTEND_URL}/reset/${resetToken}`;
 
   console.log(resetPasswordURL);
 
@@ -141,7 +146,7 @@ export const resetPassword = handleAsyncError(async (req, res, next) => {
     );
   }
   const { password, confirmPassword } = req.body;
-  if (password !== confirmPassword) {
+ if (!password || !confirmPassword || password !== confirmPassword) {
     return next(new HandleError("password doesn't match", 400));
   }
   user.password = password;
@@ -164,6 +169,9 @@ export const getUserDetails = handleAsyncError(async (req, res, next) => {
 export const updatePassword = handleAsyncError(async (req, res, next) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
   const user = await User.findById(req.user.id).select("+password");
+  
+  if (!user) return next(new HandleError("User not found", 404));
+
   const checkPasswordMatch = await user.verifyPassword(oldPassword);
   if (!checkPasswordMatch) {
     return next(new HandleError("Old password is incorrect", 400));
@@ -183,7 +191,7 @@ export const updateProfile = handleAsyncError(async (req, res, next) => {
     name,
     email,
   };
-  if (avatar !== "") {
+  if (avatar && avatar !== "") {
     const user = await User.findById(req.user.id);
     const imageId = user.avatar.public_id;
     await cloudinary.uploader.destroy(imageId);

@@ -4,13 +4,21 @@ import User from "../model/userModel.js";
 import HandleError from "../utils/handleError.js";
 
 export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
-  const token = req.cookies.token;
-  console.log("Token from cookie:", token);
 
-  if (!token) {
-    console.log("No token found");
-    return next(new HandleError("Authentication token missing", 401));
-  }
+let token;
+
+// cookie check
+if (req.cookies.token) {
+  token = req.cookies.token;
+}
+//  fallback
+else if (req.headers.authorization?.startsWith("Bearer ")) {
+  token = req.headers.authorization.split(" ")[1];
+}
+
+if (!token) {
+  return next(new HandleError("Authentication token missing", 401));
+}
 
   try {
     const decodedData = jwt.verify(token, process.env.JWT_SECRET_KEY);

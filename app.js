@@ -11,67 +11,83 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 
+// Fix __dirname (ESM)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  dotenv.config({ path: "backend/config/config.env" });
-}
+// Load env FIRST 
+dotenv.config({ path: path.join(__dirname, "config", "config.env") });
 
 const app = express();
 
-
-// app.use(
-//   cors({
-//     origin: [
-//       "http://localhost:5174",
-//       "https://mern-stylenest.onrender.com"
-//     ],
-//     credentials: true,
-//   })
-// );
-
+//  CORS config 
 const allowedOrigins = [
+  "http://localhost:5173",
   "http://localhost:5174",
   "https://mern-stylenest.onrender.com",
 ];
 
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null,true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  optionsSuccessStatus: 204,
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
+
+// app.use((req, res, next) => {
+//   console.log("Origin:", req.headers.origin);
+//   next();
+// });
+
+// Middlewares
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" })); 
+app.use(cookieParser());
 app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
+  fileUpload({
+    limits: { fileSize: 10 * 1024 * 1024 },
   })
 );
 
-// Middleware
-app.use(express.json());
-app.use(cookieParser());
-app.use(fileUpload());
 
-// Routes
+app.use((req, res, next) => {
+  console.log(`Route hit: ${req.method} ${req.url}`);
+  next();
+});
+
+//  Routes
 app.use("/api/v1", productRoutes);
 app.use("/api/v1", user);
 app.use("/api/v1", order);
 app.use("/api/v1", payment);
 
-// Serve frontend in production
+//  Health check route (debugging ke liye helpful)
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ success: true, message: "API is working" });
+});
+
+// Serve frontend
 if (process.env.NODE_ENV === "PRODUCTION") {
-  app.use(express.static(path.join(__dirname, "../frontend/dist")));
+  const frontendPath = path.join(__dirname, "../frontend/dist");
+
+  app.use(express.static(frontendPath));
 
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "../frontend/dist/index.html"));
+    res.sendFile(path.resolve(frontendPath, "index.html"));
   });
 }
 
-// Error Middleware (ALWAYS LAST)
+// Error Middleware 
 app.use(errorHandleMiddleware);
 
 export default app;
