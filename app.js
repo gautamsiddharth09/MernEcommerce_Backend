@@ -24,6 +24,7 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
+  "https://mern-ecommerce-frontend-hazel.vercel.app",
   "https://mern-stylenest.onrender.com",
 ];
 
