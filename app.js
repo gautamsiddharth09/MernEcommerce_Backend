@@ -55,7 +55,10 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 app.use(
   fileUpload({
-    limits: { fileSize: 10 * 1024 * 1024 },
+    useTempFiles: true,
+    limits: {
+      fileSize: 10 * 1024 * 1024,
+    },
   })
 );
 
@@ -77,7 +80,7 @@ app.get("/api/health", (req, res) => {
 });
 
 // Serve frontend
-if (process.env.NODE_ENV === "PRODUCTION") {
+if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../frontend/dist");
 
   app.use(express.static(frontendPath));
