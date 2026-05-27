@@ -37,11 +37,9 @@ const corsOptions = {
   credentials: true,
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
-app.options(/.*/, cors(corsOptions));
 
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);
@@ -61,12 +59,13 @@ app.use(
   })
 );
 
-
-app.use((req, res, next) => {
-  console.log(`Route hit: ${req.method} ${req.url}`);
-  next();
-});
-
+// in development debugging
+if (process.env.NODE_ENV !== "production") {
+  app.use((req, res, next) => {
+    console.log(`Route hit: ${req.method} ${req.url}`);
+    next();
+  });
+}
 //  Routes
 app.use("/api/v1", productRoutes);
 app.use("/api/v1", user);

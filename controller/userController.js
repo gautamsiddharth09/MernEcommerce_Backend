@@ -47,7 +47,9 @@ export const registerUser = handleAsyncError(async (req, res, next) => {
 
 // Login
 export const loginUser = handleAsyncError(async (req, res, next) => {
+  console.log("line no 50")
   const { email, password } = req.body;
+  
 
   if (!email || !password) {
     return next(
@@ -62,9 +64,6 @@ export const loginUser = handleAsyncError(async (req, res, next) => {
   if (!user) {
     return next(new HandleError("Invalid Email or password", 401));
   }
-
-
-
   // password verify
   const isPasswordValid = await user.verifyPassword(password);
 
@@ -79,6 +78,49 @@ export const loginUser = handleAsyncError(async (req, res, next) => {
 
   sendToken(user, 200, res);
 });
+
+
+// // new login method
+// export const loginUser = async (req, res) => {
+//     try {
+//         const { password, userName } = req.body;
+//         if (!password || !userName) {
+//             return res.status(400).json({ message: "Email and userName required" });
+//         }
+//         const user = await User.findOne({ userName });
+//         if (!user) {
+//             return res.status(400).json({ message: "User Not Found !!" });
+//         };
+
+//         const isMatched = await bcrypt.compare(password, user.password);
+
+//         if (!isMatched) {
+//             return res.status(400).json({ message: "Incorrect Password !!" });
+//         }
+//          sendToken(user, 200, res);
+
+//          console.log("send tolken line no 104")
+
+//         // const token = await genToken(user._id)
+
+//         // res.cookie("token", token, {
+//         //     httpOnly: true,
+//         //     // secure: false,
+//         //     secure: true,
+//         //     // sameSite: "strict",
+//         //     sameSite: "none",
+//         //     maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
+//         // })
+
+//         return res.status(200).json(user);
+//     }
+//     catch (err) {
+//         return res.status(500).json({ message: `Signin Error ${err}` });
+//     }
+// }
+
+
+
 
 //Logout
 export const logout = handleAsyncError(async (req, res, next) => {
