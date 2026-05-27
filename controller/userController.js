@@ -44,22 +44,38 @@ export const registerUser = handleAsyncError(async (req, res, next) => {
   sendToken(user, 201, res);
 });
 
-//Login
+
+// Login
 export const loginUser = handleAsyncError(async (req, res, next) => {
   const { email, password } = req.body;
+
   if (!email || !password) {
-    return next(new HandleError("Email or password can not be empty", 400));
+    return next(
+      new HandleError("Email or password can not be empty", 400)
+    );
   }
- const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
+
+  const user = await User.findOne({
+    email: email.toLowerCase(),
+  }).select("+password");
+
   if (!user) {
     return next(new HandleError("Invalid Email or password", 401));
   }
 
-  //password verify
+
+
+  // password verify
   const isPasswordValid = await user.verifyPassword(password);
+
   if (!isPasswordValid) {
     return next(new HandleError("Invalid Email or password", 401));
   }
+
+  // removng  sensitive fields dont want to send it in response
+  user.password = undefined;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
 
   sendToken(user, 200, res);
 });

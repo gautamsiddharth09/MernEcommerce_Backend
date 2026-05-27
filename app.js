@@ -23,7 +23,6 @@ const app = express();
 //  CORS config 
 const allowedOrigins = [
   "http://localhost:5173",
-  "http://localhost:5174",
   "https://mern-ecommerce-frontend-hazel.vercel.app",
 ];
 
@@ -44,10 +43,10 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 
-// app.use((req, res, next) => {
-//   console.log("Origin:", req.headers.origin);
-//   next();
-// });
+app.use((req, res, next) => {
+  console.log("Origin:", req.headers.origin);
+  next();
+});
 
 // Middlewares
 app.use(express.json({ limit: "10mb" }));
@@ -74,7 +73,7 @@ app.use("/api/v1", user);
 app.use("/api/v1", order);
 app.use("/api/v1", payment);
 
-//  Health check route (debugging ke liye helpful)
+// health check route (debugging ke liye helpful)
 app.get("/api/health", (req, res) => {
   res.status(200).json({ success: true, message: "API is working" });
 });
