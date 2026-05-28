@@ -21,25 +21,17 @@ dotenv.config({ path: path.join(__dirname, "config", "config.env") });
 const app = express();
 
 //  CORS config 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://mern-ecommerce-frontend-hazel.vercel.app",
-];
-
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null,true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-};
-
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://mern-ecommerce-frontend-e82ca079z-gautamsiddharth09s-projects.vercel.app",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);
