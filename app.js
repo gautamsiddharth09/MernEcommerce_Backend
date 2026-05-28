@@ -25,7 +25,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://mern-ecommerce-frontend-e82ca079z-gautamsiddharth09s-projects.vercel.app",
+      "https://mern-ecommerce-frontend-hazel.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
