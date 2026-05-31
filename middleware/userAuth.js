@@ -1,18 +1,18 @@
-import handleAsyncError from "./handleAsyncError.js";
+
 import jwt from "jsonwebtoken";
 import User from "../model/userModel.js";
 import HandleError from "../utils/handleError.js";
 
-export const verifyUserAuth = handleAsyncError(async (req, res, next) => {
+export const verifyUserAuth = async (req, res, next) => {
 
 let token;
 
 // cookie check
 if (req.cookies.token) {
-  token = req.cookies.token;
+  token = req.cookies?.token; 
 }
 //  fallback
-else if (req.headers.authorization?.startsWith("Bearer ")) {
+else if (req.headers.authorization?.startsWith("Bearer")) {
   token = req.headers.authorization.split(" ")[1];
 }
 
@@ -38,7 +38,7 @@ if (!token) {
     console.log("Token verification error:", error);
     return next(new HandleError("Invalid or expired token", 401));
   }
-});
+};
 
 export const roleBasedAccess = (...roles) => {
   return (req, res, next) => {

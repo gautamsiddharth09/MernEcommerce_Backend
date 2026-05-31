@@ -20,6 +20,8 @@ dotenv.config({ path: path.join(__dirname, "config", "config.env") });
 
 const app = express();
 
+app.disable('etag');
+
 //  CORS config 
 app.use(
   cors({
@@ -32,6 +34,8 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+
 
 app.use((req, res, next) => {
   console.log("Origin:", req.headers.origin);

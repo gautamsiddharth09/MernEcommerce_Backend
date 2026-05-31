@@ -1,10 +1,11 @@
-import handleAsyncError from "../middleware/handleAsyncError.js";
+
 import User from "../model/userModel.js";
 import HandleError from "../utils/handleError.js";
 import { sendToken } from "../utils/jwtToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import crypto from "crypto";
 import { v2 as cloudinary } from "cloudinary";
+import handleAsyncError from "../middleware/handleAsyncError.js";
 
 // register user
 export const registerUser = handleAsyncError(async (req, res, next) => {
@@ -78,47 +79,6 @@ export const loginUser = handleAsyncError(async (req, res, next) => {
 
   sendToken(user, 200, res);
 });
-
-
-// // new login method
-// export const loginUser = async (req, res) => {
-//     try {
-//         const { password, userName } = req.body;
-//         if (!password || !userName) {
-//             return res.status(400).json({ message: "Email and userName required" });
-//         }
-//         const user = await User.findOne({ userName });
-//         if (!user) {
-//             return res.status(400).json({ message: "User Not Found !!" });
-//         };
-
-//         const isMatched = await bcrypt.compare(password, user.password);
-
-//         if (!isMatched) {
-//             return res.status(400).json({ message: "Incorrect Password !!" });
-//         }
-//          sendToken(user, 200, res);
-
-//          console.log("send tolken line no 104")
-
-//         // const token = await genToken(user._id)
-
-//         // res.cookie("token", token, {
-//         //     httpOnly: true,
-//         //     // secure: false,
-//         //     secure: true,
-//         //     // sameSite: "strict",
-//         //     sameSite: "none",
-//         //     maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
-//         // })
-
-//         return res.status(200).json(user);
-//     }
-//     catch (err) {
-//         return res.status(500).json({ message: `Signin Error ${err}` });
-//     }
-// }
-
 
 
 
