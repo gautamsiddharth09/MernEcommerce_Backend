@@ -15,7 +15,7 @@ dotenv.config({ path: "config/config.env" });
 const app = express();
 
 // Use a single allowed origin (env or local dev default)
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:5173";
+const FRONTEND_URL = process.env.FRONTEND_URL
 app.use(
   cors({
     origin: FRONTEND_URL,
