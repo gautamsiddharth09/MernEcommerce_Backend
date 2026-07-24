@@ -1,4 +1,3 @@
-
 import User from "../model/userModel.js";
 import HandleError from "../utils/handleError.js";
 import { sendToken } from "../utils/jwtToken.js";
@@ -9,14 +8,15 @@ import handleAsyncError from "../middleware/handleAsyncError.js";
 
 // register user
 export const registerUser = handleAsyncError(async (req, res, next) => {
+  console.log("registerUser called - next type:", typeof next);
   const { name, email, password, avatar } = req.body;
 
   if (!name || !email || !password) {
-    return next(new HandleError("Please provide name, email and password", 400));
+    throw new HandleError("Please provide name, email and password", 400);
   }
 
   if (!avatar || avatar.trim() === "") {
-    return next(new HandleError("Avatar is required", 400));
+    throw new HandleError("Avatar is required", 400);
   }
 
   let myCloud;
@@ -27,9 +27,7 @@ export const registerUser = handleAsyncError(async (req, res, next) => {
       crop: "scale",
     });
   } catch (error) {
-    return next(
-      new HandleError(error.message || "Avatar upload failed", 500)
-    );
+    throw new HandleError(error.message || "Avatar upload failed", 500);
   }
 
   const user = await User.create({
@@ -41,21 +39,16 @@ export const registerUser = handleAsyncError(async (req, res, next) => {
       url: myCloud.secure_url,
     },
   });
-
   sendToken(user, 201, res);
 });
 
-
 // Login
 export const loginUser = handleAsyncError(async (req, res, next) => {
-  console.log("line no 50")
+  console.log("line no 50");
   const { email, password } = req.body;
-  
 
   if (!email || !password) {
-    return next(
-      new HandleError("Email or password can not be empty", 400)
-    );
+    return next(new HandleError("Email or password can not be empty", 400));
   }
 
   const user = await User.findOne({
@@ -80,17 +73,15 @@ export const loginUser = handleAsyncError(async (req, res, next) => {
   sendToken(user, 200, res);
 });
 
-
-
 //Logout
 export const logout = handleAsyncError(async (req, res, next) => {
-res.cookie("token", null, {
-  expires: new Date(Date.now()),
-  httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-});
-// i was facing cors issues that is why i added env var. for https safety
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
+  // i was facing cors issues that is why i added env var. for https safety
   res.status(200).json({
     success: true,
     message: "Successfully Logged out",
@@ -164,7 +155,7 @@ export const resetPassword = handleAsyncError(async (req, res, next) => {
     );
   }
   const { password, confirmPassword } = req.body;
- if (!password || !confirmPassword || password !== confirmPassword) {
+  if (!password || !confirmPassword || password !== confirmPassword) {
     return next(new HandleError("password doesn't match", 400));
   }
   user.password = password;
@@ -187,7 +178,7 @@ export const getUserDetails = handleAsyncError(async (req, res, next) => {
 export const updatePassword = handleAsyncError(async (req, res, next) => {
   const { oldPassword, newPassword, confirmPassword } = req.body;
   const user = await User.findById(req.user.id).select("+password");
-  
+
   if (!user) return next(new HandleError("User not found", 404));
 
   const checkPasswordMatch = await user.verifyPassword(oldPassword);
